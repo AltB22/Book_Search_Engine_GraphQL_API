@@ -1,9 +1,11 @@
 const express = require('express');
-const cors = require('cors');//added cors for cross origin resources
-require('dotenv').config({path: './config.env'});//loads env variables from config.env into process.env. We will need to switch to using config.env 
-const { ApolloServer } = require('apollo-server-express');//added ApolloServer import
 const path = require('path');
+const { ApolloServer } = require('apollo-server-express');//added ApolloServer import
+const { authMiddleware } = require('./utils/auth');
+
 // const routes = require('./routes');//commented out routes as unncessary with graphql resolvers
+
+const cors = require('cors');//added cors for cross origin resources
 const { typeDefs, resolvers } = require('./schemas');//imports the type definitions and resolvers for use in gql schema
 const db = require('./config/connection');
 
@@ -11,9 +13,10 @@ const app = express();
 const PORT = process.env.PORT || 3001;
 
 
-const server = new ApolloServer({//creates new instance of ApolloServer using typeDefs & resolvers
+const server = new ApolloServer({//creates new instance of ApolloServer using typeDefs, resolvers and authentication middleware
   typeDefs,
   resolvers,
+  context: authMiddleware,
 });
 
 app.use(cors());
