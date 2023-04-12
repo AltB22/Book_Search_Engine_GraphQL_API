@@ -1,16 +1,18 @@
 const express = require('express');
+const app = express();
+
 const path = require('path');
-const { ApolloServer } = require('apollo-server-express');//added ApolloServer import
+
+require('dotenv').config({ path: __dirname+"/../.env" });
+
+const PORT = process.env.PORT || 3001;
 const { authMiddleware } = require('./utils/auth');
+const { ApolloServer } = require('apollo-server-express');//added ApolloServer import
 
 // const routes = require('./routes');//commented out routes as unncessary with graphql resolvers
 
-const cors = require('cors');//added cors for cross origin resources
 const { typeDefs, resolvers } = require('./schemas');//imports the type definitions and resolvers for use in gql schema
 const db = require('./config/connection');
-
-const app = express();
-const PORT = process.env.PORT || 3001;
 
 
 const server = new ApolloServer({//creates new instance of ApolloServer using typeDefs, resolvers and authentication middleware
@@ -19,7 +21,8 @@ const server = new ApolloServer({//creates new instance of ApolloServer using ty
   context: authMiddleware,
 });
 
-app.use(cors());
+server.applyMiddleware({ app });
+
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
@@ -30,12 +33,12 @@ if (process.env.NODE_ENV === 'production') {
 
 // app.use(routes);not needed
 
-db.once('open', () => {
-  app.listen(PORT, () => console.log(`🌍 Now listening on localhost:${PORT}`));
-});
-
-//Added error handling middleware for unhandled errors
-app.use((err, req, res, next) => {
-  console.error(err);
-  res.status(500).json({ error: 'Internal server error' });
-});
+const startApolloServer = async (typeDefs, resolvers) => {
+  await server.start();
+  server.applyMiddleware({ app });
+  //starts the server and listens for incoming requests. Once connection established, app listens on the specified port.
+  db.once('open', () => {
+    app.listen(PORT, () => console.log(`Now listening on localhost: ${PORT}`));
+  });
+}
+startApolloServer(typeDefs, resolvers);
