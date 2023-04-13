@@ -1,35 +1,24 @@
 const { AuthenticationError } = require("apollo-server-express");
-const { User, Comment, Location } = require("../models");
+const { User } = require("../models");
 const { signToken } = require("../utils/auth");
 
-//defines the resolvers
+//Below defines the resolvers
 const resolvers = {
-	//query is like get routes, handles retreival of data from the server.  It is itself an object that contains multiple resolvers for retreiving data.
+	//Defining the query.  Query is like get routes, handles retreival of data from the server.  It is itself an object that contains multiple resolvers for retreiving data.
 	Query: {
-		user: async () => {
-			return User.find();
-		},
-		// user: async (parent, { userId }) => {//commented this out for now until we can sort it out. - Billy
-		// 	return User.findOne({ _id: userId });
-		// },
-		me: async (parent, args, context) => {
+		me: async (parent, context) => {
 			if (context.user) {
-				return User.findOne({ _id: context.user._id }); //we may need to adjust this to context.userId - Billy
+			  return User.findOne({ _id: context.user._id })
+			  .select("-__v -password")
+			  .populate("books");
+	
 			}
-			throw new AuthenticationError("You need to be logged in!");
+			throw new AuthenticationError('You must be logged in!');
+		  },
 		},
-		//added Location to match the TypeDefs so that we can find one location. - Bax
-		location: async (parent, { surf_spot }) => {
-			return Location.findOne({ surf_spot });
-		},
-		user: async (parent, { username }) => {
-			// Added this resolver for the new 'user' field - Billy Isnt this done on line 8? -Bax - it's find all v. find one. -Billy
-			return User.findOne({ username });
-		},
-	},
 
-	//Defines the Mutations
-	//Mutations are like post, put, & delelte routes.  It is itself an object that contains multiple resolvers for modifying data on the server.
+	// Defines the Mutations:
+	//Mutations are like post, put, & delete routes.  It is itself an object that contains multiple resolvers for modifying data on the server.
 
 	Mutation: {
 		addUser: async (parent, { username, email, password }) => {
@@ -40,7 +29,7 @@ const resolvers = {
 		login: async (parent, { email, password }) => {
 			const user = await User.findOne({ email });
 			if (!user) {
-				throw new AuthenticationError("No user with this email found!");
+				throw new AuthenticationError("User not found!");
 			}
 			const correctPw = await user.isCorrectPassword(password);
 			if (!correctPw) {
