@@ -47,30 +47,23 @@ const resolvers = {
 					{ new: true, runValidators: true }
 				);
 
-				return updatedUser;
+				return updateBookToUser;
 			}
-			throw new AuthenticationError("You need to be logged in!");
-		},
-		addLocation: async (parent, args, context) => {
-			if (context.user) {
-				const location = await Location.create({
-					...args,
-					user: context.user._id, //we may need to adjust this to context.userId - Billy
-				});
-				return location;
-			}
-			throw new AuthenticationError("You need to be logged in!");
+			throw new AuthenticationError("You must be logged in!");
 		},
 
-		removeBook: async (parent, { locationId, comment }, context) => {
+		removeBook: async (parent, args, context) => {
 			if (context.user) {
-				return Location.findOneAndUpdate(
-					{ _id: locationId }, //we may need to adjust this to context.locationId - Billy this may work now -Bax
-					{ $pull: { comments: { _id: comment } } },
-					{ new: true }
+				const updateBookToUser = await User.findByIdAndUpdate(
+
+					{ _id: context.user._idId },
+					{ $pull: { savedBooks: args.input } },
+					{ new: true, runValidators: true }
 				);
+
+				return updateBookToUser;
 			}
-			throw new AuthenticationError("You need to be logged in!");
+			throw new AuthenticationError("You must be logged in!");
 		},
 	},
 };
