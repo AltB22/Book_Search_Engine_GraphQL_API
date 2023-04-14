@@ -33,7 +33,7 @@ const typeDefs = gql`
 		link: String
 	}
 
-	type Query {}
+	type Query {
 		me: User
 	}
 
@@ -42,9 +42,9 @@ const typeDefs = gql`
 
 		login(email: String!, password: String!): Auth
 
-		addBook(newBook: saveBook!): User
+		saveBook(bookId: ID!): User
 
-		removeBook:(bookId: ID!): User
+		removeBook(bookId: ID!): User
 
 	}
 `;
