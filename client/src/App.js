@@ -18,11 +18,14 @@ const client = new ApolloClient({
   },
 });
 
+
+
 function App() {
   return (
     <ApolloProvider client={client}>
     <Router>
       <>
+      <SearchBooks />
         <Navbar />
         <Switch>
           <Route exact path='/' component={SearchBooks} />
