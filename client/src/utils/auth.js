@@ -1,4 +1,4 @@
-const jwt = require ("jsonwebtoken");
+const decode = require("jwt-decode");
 
 // create a new class to instantiate for a user
 class AuthService {
