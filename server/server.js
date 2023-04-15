@@ -1,11 +1,10 @@
 const express = require('express');
 const { ApolloServer } = require('apollo-server-express');//added ApolloServer import
-const path = require('path');
-// require('dotenv').config({ path: __dirname+"/../.env" });
 const { authMiddleware } = require('./utils/auth');
+const path = require('path');
 
-const { typeDefs, resolvers } = require('./schemas');//imports the type definitions and resolvers for use in gql schema
 const db = require('./config/connection');
+const { typeDefs, resolvers } = require('./schemas');//imports the type definitions and resolvers for use in gql schema
 
 const PORT = process.env.PORT || 3001;
 const app = express();
@@ -25,9 +24,9 @@ if (process.env.NODE_ENV === 'production') {
   app.use(express.static(path.join(__dirname, '../client/build')));
 }
 
-// app.get('/', (req, res) => {
-//   res.sendFile(path.join(__dirname, '../client/build/index.html'));
-// });
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, '../client/build/index.html'));
+});
 
 // app.use(routes);not needed
 
