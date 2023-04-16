@@ -8,6 +8,8 @@ mongoose.connect(process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/Book_Sear
 
 module.exports = mongoose.connection;
 
+//below provided by MongoDB Atlas when connecting app
+
 // const { MongoClient, ServerApiVersion } = require('mongodb');
 // const uri = "mongodb+srv://massiew:<password>@cluster0.qnzusba.mongodb.net/?retryWrites=true&w=majority";
 // // Create a MongoClient with a MongoClientOptions object to set the Stable API version
