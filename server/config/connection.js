@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-require('dotenv').config({ path: __dirname+"/../../.env" });
+// require('dotenv').config({ path: __dirname+"/../../.env" });
 
 mongoose.connect(process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/Book_Search_Engine', {
   useNewUrlParser: true,
